@@ -1,9 +1,5 @@
-import os
-# Aktifkan kompatibilitas Keras Legacy sebelum mengimpor tensorflow
-os.environ["TF_USE_LEGACY_KERAS"] = "1"
-
 import streamlit as st
-import tensorflow as tf
+import tf_keras as keras
 import numpy as np
 from PIL import Image
 
@@ -21,11 +17,10 @@ st.write(
     "untuk memprediksi abjadnya secara *real-time*!"
 )
 
-# 3. Fungsi Memuat Model
+# 3. Fungsi Memuat Model dengan tf_keras Legacy
 @st.cache_resource
 def load_asl_model():
-    # compile=False mengabaikan konfigurasi training/layer augmentasi yang tidak perlu saat prediksi
-    return tf.keras.models.load_model("best_model.h5", compile=False)
+    return keras.models.load_model("best_model.h5", compile=False)
 
 try:
     model = load_asl_model()
