@@ -12,6 +12,8 @@ This project contains a full sign language image classification workflow in one 
   - Test data with 7,172 images used to evaluate final performance.
 - `best_model.h5`
   - The best Keras model saved during training based on validation accuracy.
+- `.gitignore`
+  - Git ignore rules for Python, Jupyter notebook checkpoints, and local environment artifacts.
 - `saved_model/`
   - TensorFlow SavedModel format of the trained model.
 - `tfjs_model/model.json`
@@ -78,3 +80,10 @@ The project follows an ordered process from raw data to deployment-ready models.
 - Run each cell sequentially from top to bottom.
 - Verify the output in each stage before continuing.
 - After training, use the saved model files in `best_model.h5`, `saved_model/`, `tfjs_model/`, or `tflite/`.
+
+## Notes
+
+- This repository is intended for GitHub upload and project submission.
+- A new `.gitignore` file has been added to keep local Python artifacts and notebook checkpoints out of version control.
+- The notebook uses a clear stage-by-stage workflow with data loading, preprocessing, training, evaluation, and export.
+- The language is simple and direct, with no vague conclusions.
