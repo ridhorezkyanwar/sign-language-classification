@@ -1,3 +1,7 @@
+import os
+# Aktifkan kompatibilitas Keras Legacy sebelum mengimpor tensorflow
+os.environ["TF_USE_LEGACY_KERAS"] = "1"
+
 import streamlit as st
 import tensorflow as tf
 import numpy as np
@@ -17,18 +21,19 @@ st.write(
     "untuk memprediksi abjadnya secara *real-time*!"
 )
 
-# 3. Fungsi Memuat Model dengan Cache (agar tidak reload terus-menerus)
+# 3. Fungsi Memuat Model
 @st.cache_resource
 def load_asl_model():
-    return tf.keras.models.load_model("best_model.h5")
+    # compile=False mengabaikan konfigurasi training/layer augmentasi yang tidak perlu saat prediksi
+    return tf.keras.models.load_model("best_model.h5", compile=False)
 
 try:
     model = load_asl_model()
 except Exception as e:
-    st.error(f"Gagal memuat model `best_model.h5`. Pastikan berkas model berada di folder yang sama. Error: {e}")
+    st.error(f"Gagal memuat model `best_model.h5`. Error: {e}")
     st.stop()
 
-# 4. Mapping Label (Sign Language MNIST Standard: 24 Kelas, tanpa J dan Z)
+# 4. Mapping Label (ASL MNIST Standard)
 LABELS = {
     0: 'A', 1: 'B', 2: 'C', 3: 'D', 4: 'E', 5: 'F', 6: 'G', 7: 'H', 8: 'I',
     9: 'K', 10: 'L', 11: 'M', 12: 'N', 13: 'O', 14: 'P', 15: 'Q', 16: 'R',
@@ -39,7 +44,6 @@ LABELS = {
 uploaded_file = st.file_uploader("Unggah gambar isyarat tangan...", type=["png", "jpg", "jpeg"])
 
 if uploaded_file is not None:
-    # Tampilkan gambar yang diunggah
     image = Image.open(uploaded_file)
     st.image(image, caption="Gambar Input", width=250)
     
@@ -55,7 +59,7 @@ if uploaded_file is not None:
         confidence = np.max(predictions[0]) * 100
         predicted_label = LABELS.get(predicted_idx, f"Kelas {predicted_idx}")
 
-    # Display Hasil Prediksi & Confidence Score
+    # Display Hasil
     st.markdown("---")
     col1, col2 = st.columns(2)
     
