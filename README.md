@@ -14,7 +14,7 @@ The deployed web app allows you to:
 
 ## What is inside
 
-- `Template_Submission_Akhir.ipynb`
+- `Sign_Language_CNN_Training.ipynb`
   - Main notebook with complete code, explanations, and execution results.
 - `app.py`
   - Streamlit web application for real-time sign language prediction.
