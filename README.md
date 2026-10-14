@@ -40,7 +40,7 @@ The deployed web app allows you to:
 - `tflite/model.tflite`
   - TensorFlow Lite model for mobile or edge inference.
 - `tflite/label.txt`
-  - Labels file for the TFLite model.
+  - Labels aligned to the model's original output indices; index 9 is marked unused because static Sign-MNIST has no J class.
 - Example images: `amer_sign2.png`, `amer_sign3.png`, `american_sign_language.PNG`
   - Reference images used to illustrate the sign language theme.
 
@@ -144,7 +144,7 @@ No installation required.
 
 ## Supported ASL Letters
 
-The model classifies 24 American Sign Language letters:
+The model has 25 output indices, matching the original Sign-MNIST label IDs. It supports 24 static American Sign Language letters; index 9 is intentionally unused because J is not present in the dataset:
 
 A, B, C, D, E, F, G, H, I, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y
 
