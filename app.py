@@ -28,11 +28,12 @@ except Exception as e:
     st.error(f"Gagal memuat model `best_model.h5`. Error: {e}")
     st.stop()
 
-# 4. Mapping Label (ASL MNIST Standard)
+# 4. Mapping label mengikuti nilai label asli Sign-MNIST.
+# Dataset tidak memiliki kelas J (indeks 9), sehingga indeks itu tidak boleh
+# digeser menjadi K. Output indeks 9 ditampilkan sebagai kelas yang tidak didukung.
 LABELS = {
-    0: 'A', 1: 'B', 2: 'C', 3: 'D', 4: 'E', 5: 'F', 6: 'G', 7: 'H', 8: 'I',
-    9: 'K', 10: 'L', 11: 'M', 12: 'N', 13: 'O', 14: 'P', 15: 'Q', 16: 'R',
-    17: 'S', 18: 'T', 19: 'U', 20: 'V', 21: 'W', 22: 'X', 23: 'Y'
+    **{i: chr(ord('A') + i) for i in range(9)},
+    **{i: chr(ord('A') + i - 1) for i in range(10, 25)},
 }
 
 # 5. Widget Upload Gambar
