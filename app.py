@@ -33,7 +33,7 @@ except Exception as e:
 # digeser menjadi K. Output indeks 9 ditampilkan sebagai kelas yang tidak didukung.
 LABELS = {
     **{i: chr(ord('A') + i) for i in range(9)},
-    **{i: chr(ord('A') + i - 1) for i in range(10, 25)},
+    **{i: chr(ord('A') + i) for i in range(10, 25)},
 }
 
 # 5. Widget Upload Gambar
