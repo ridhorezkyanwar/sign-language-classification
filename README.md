@@ -1,5 +1,15 @@
 # Proyek Klasifikasi Gambar - Sign Language Classification
 
+<p align="center">
+  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=500&size=18&duration=2600&pause=850&color=58A6FF&center=true&vCenter=true&width=520&lines=Build+%E2%80%A2+Test+%E2%80%A2+Improve" alt="Animated banner: Build, Test, Improve" />
+</p>
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white" alt="Python badge" />
+  <img src="https://img.shields.io/badge/TensorFlow-FF6F00?style=flat-square&logo=tensorflow&logoColor=white" alt="TensorFlow badge" />
+  <img src="https://img.shields.io/badge/Streamlit-FF4B4B?style=flat-square&logo=streamlit&logoColor=white" alt="Streamlit badge" />
+</p>
+
+
 This project contains a full sign language image classification workflow in one notebook. It uses the Sign MNIST dataset to train a convolutional neural network, exports the trained model in multiple deployment formats, and includes a web interface for real-time predictions.
 
 ## Live Demo
