@@ -3,6 +3,8 @@ import tf_keras as keras
 import numpy as np
 from PIL import Image
 
+from label_mapping import UNSUPPORTED_LABEL_INDEX, display_label, is_supported_label
+
 # 1. Konfigurasi Halaman Streamlit
 st.set_page_config(
     page_title="ASL Sign Language Classifier",
@@ -31,10 +33,6 @@ except Exception as e:
 # 4. Mapping label mengikuti nilai label asli Sign-MNIST.
 # Dataset tidak memiliki kelas J (indeks 9), sehingga indeks itu tidak boleh
 # digeser menjadi K. Output indeks 9 ditampilkan sebagai kelas yang tidak didukung.
-LABELS = {
-    **{i: chr(ord('A') + i) for i in range(9)},
-    **{i: chr(ord('A') + i) for i in range(10, 25)},
-}
 
 # 5. Widget Upload Gambar
 uploaded_file = st.file_uploader("Unggah gambar isyarat tangan...", type=["png", "jpg", "jpeg"])
@@ -53,11 +51,7 @@ if uploaded_file is not None:
         predictions = model.predict(img_array)
         predicted_idx = np.argmax(predictions[0])
         confidence = np.max(predictions[0]) * 100
-        predicted_label = (
-            "Kelas J tidak tersedia"
-            if predicted_idx == 9
-            else LABELS.get(predicted_idx, f"Kelas {predicted_idx}")
-        )
+        predicted_label = display_label(int(predicted_idx))
 
     # Display Hasil
     st.markdown("---")
@@ -69,7 +63,7 @@ if uploaded_file is not None:
     with col2:
         st.metric(label="Skor output model", value=f"{confidence:.2f}%")
         
-    if predicted_idx == 9:
+    if not is_supported_label(int(predicted_idx)):
         st.warning(
             "Model memilih indeks 9, yang tidak memiliki kelas J pada dataset Sign-MNIST statis. "
             "Hasil ini tidak dapat diperlakukan sebagai prediksi huruf yang didukung."
