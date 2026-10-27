@@ -1,9 +1,14 @@
+import logging
+
 import streamlit as st
 import tf_keras as keras
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageOps, UnidentifiedImageError
 
-from label_mapping import UNSUPPORTED_LABEL_INDEX, display_label, is_supported_label
+from label_mapping import display_label, is_supported_label
+
+LOGGER = logging.getLogger(__name__)
+MAX_UPLOAD_BYTES = 5 * 1024 * 1024
 
 # 1. Konfigurasi Halaman Streamlit
 st.set_page_config(
@@ -26,8 +31,12 @@ def load_asl_model():
 
 try:
     model = load_asl_model()
-except Exception as e:
-    st.error(f"Gagal memuat model `best_model.h5`. Error: {e}")
+except Exception:
+    LOGGER.exception("Failed to load the Sign-MNIST model.")
+    st.error(
+        "Model gagal dimuat. Pastikan file `best_model.h5` tersedia dan versi "
+        "dependensi sesuai. Detail teknis dicatat di log server."
+    )
     st.stop()
 
 # 4. Mapping label mengikuti nilai label asli Sign-MNIST.
@@ -38,12 +47,23 @@ except Exception as e:
 uploaded_file = st.file_uploader("Unggah gambar isyarat tangan...", type=["png", "jpg", "jpeg"])
 
 if uploaded_file is not None:
-    image = Image.open(uploaded_file)
+    if uploaded_file.size > MAX_UPLOAD_BYTES:
+        st.error("Ukuran gambar maksimal 5 MB.")
+        st.stop()
+
+    try:
+        image = Image.open(uploaded_file)
+        image.load()
+        image = ImageOps.exif_transpose(image)
+    except (UnidentifiedImageError, OSError, Image.DecompressionBombError):
+        st.error("File tidak dapat dibaca sebagai gambar yang valid.")
+        st.stop()
+
     st.image(image, caption="Gambar Input", width=250)
-    
+
     with st.spinner("Mengklasifikasikan gambar..."):
-        # Pra-pemrosesan Gambar
-        img_gray = image.convert('L').resize((28, 28))
+        # Pra-pemrosesan gambar mengikuti format input CNN.
+        img_gray = image.convert("L").resize((28, 28))
         img_array = np.array(img_gray) / 255.0
         img_array = np.expand_dims(img_array, axis=(-1, 0))  # Shape: (1, 28, 28, 1)
 
@@ -65,8 +85,8 @@ if uploaded_file is not None:
         
     if not is_supported_label(int(predicted_idx)):
         st.warning(
-            "Model memilih indeks 9, yang tidak memiliki kelas J pada dataset Sign-MNIST statis. "
-            "Hasil ini tidak dapat diperlakukan sebagai prediksi huruf yang didukung."
+            f"Model memilih output indeks {int(predicted_idx)}, yang tidak memiliki "
+            "label huruf statis yang didukung. Hasil ini bukan prediksi huruf yang valid."
         )
     else:
         st.success(
