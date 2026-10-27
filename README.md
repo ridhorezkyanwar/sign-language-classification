@@ -15,7 +15,7 @@ This project contains a full sign language image classification workflow in one 
 The deployed web app allows you to:
 
 - Upload an image of an American Sign Language (ASL) hand sign.
-- Get real-time classification and confidence score for the predicted letter.
+- Get a predicted static letter and the model's output score. The score is not a calibrated probability.
 - View results immediately in the browser.
 
 ## What is inside
@@ -25,7 +25,7 @@ The deployed web app allows you to:
 - `app.py`
   - Streamlit web application for real-time sign language prediction.
   - Loads the trained model and accepts image uploads.
-  - Displays predicted letter and confidence score.
+  - Displays the predicted letter and uncalibrated model output score.
 - `test_prediction.py`
   - Python script to test model predictions on a single image.
   - Used for batch testing and offline inference.
@@ -118,7 +118,7 @@ No installation required.
 ### Option 2: Run locally
 
 1. Clone or download this project to your computer.
-2. Install Python 3.8 or higher.
+2. Use Python 3.11 for the pinned TensorFlow 2.15 dependency set (supported TensorFlow 2.15 runtimes are Python 3.9–3.11).
 3. Navigate to the project directory in terminal or command prompt.
 4. Install dependencies by running:
    ```bash
@@ -139,7 +139,7 @@ No installation required.
    ```bash
    python test_prediction.py
    ```
-4. The predicted class number will print to the console.
+4. The predicted class number will print to the console. Output index 9 is intentionally unsupported because the static dataset has no J class.
 
 ### Option 4: Run the notebook
 
@@ -162,6 +162,15 @@ Note: Letters J and Z require motion and are not included in the static MNIST da
 - Validation accuracy: 99.44%
 - Test accuracy: 93.01%
 - Test loss: 0.2384
+
+
+
+### Reproducible runtime and score interpretation
+
+- The app dependency versions are pinned to keep TensorFlow 2.15 and legacy `tf-keras` aligned. Use Python 3.11 for local reproduction.
+- If Streamlit Community Cloud is configured with Python 3.12 or newer, the existing deployment must be recreated with Python 3.11 in its Advanced settings; changing `requirements.txt` does not change the Python runtime of an already-created Community Cloud app.
+- The value shown as a model output score is the selected softmax output multiplied by 100. It has not been calibrated, so it must not be interpreted as a statistically calibrated probability or as a guarantee of correctness.
+- Index 9 is intentionally absent from supported letters. If the model selects that unused output, the UI reports it as unsupported rather than shifting it to K.
 
 ## Notes
 
