@@ -14,7 +14,7 @@ st.set_page_config(
 st.title("🤟 ASL Sign Language Classifier")
 st.write(
     "Unggah gambar bahasa isyarat tangan (American Sign Language) "
-    "untuk memprediksi abjadnya secara *real-time*!"
+    "untuk memperkirakan abjadnya. Skor yang ditampilkan adalah skor output model, bukan probabilitas yang telah dikalibrasi."
 )
 
 # 3. Fungsi Memuat Model dengan tf_keras Legacy
@@ -53,7 +53,11 @@ if uploaded_file is not None:
         predictions = model.predict(img_array)
         predicted_idx = np.argmax(predictions[0])
         confidence = np.max(predictions[0]) * 100
-        predicted_label = LABELS.get(predicted_idx, f"Kelas {predicted_idx}")
+        predicted_label = (
+            "Kelas J tidak tersedia"
+            if predicted_idx == 9
+            else LABELS.get(predicted_idx, f"Kelas {predicted_idx}")
+        )
 
     # Display Hasil
     st.markdown("---")
@@ -63,6 +67,15 @@ if uploaded_file is not None:
         st.metric(label="Prediksi Huruf", value=predicted_label)
     
     with col2:
-        st.metric(label="Confidence Score", value=f"{confidence:.2f}%")
+        st.metric(label="Skor output model", value=f"{confidence:.2f}%")
         
-    st.success(f"Model memprediksi gambar ini sebagai **Huruf {predicted_label}** dengan tingkat kepastian **{confidence:.2f}%**.")
+    if predicted_idx == 9:
+        st.warning(
+            "Model memilih indeks 9, yang tidak memiliki kelas J pada dataset Sign-MNIST statis. "
+            "Hasil ini tidak dapat diperlakukan sebagai prediksi huruf yang didukung."
+        )
+    else:
+        st.success(
+            f"Prediksi model: **Huruf {predicted_label}**. "
+            f"Skor output model: **{confidence:.2f}%** (bukan probabilitas terkalibrasi)."
+        )
